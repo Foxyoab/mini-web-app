@@ -1,0 +1,29 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: miniweb
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: foxyoab/mini-web-app:~v0.4.0
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: 'test'
+    server: https://kubernetes.default.svc
+  source:
+    path: miniwebapp
+    repoURL: https://github.com/Foxyoab/mini-web-app.git
+    targetRevision: HEAD
+    helm:
+      parameters:
+        - name: "image.repository"
+          value: foxyoab/mini-web-app
+        - name: "image.tag"
+          value: v0.1.0
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false

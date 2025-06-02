@@ -15,5 +15,5 @@ spec:
         app: {{ .Release.Name }}
     spec:
       containers:
-      - image: foxyoab/mini-web-app
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         name: mini-web-app
