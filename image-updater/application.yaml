@@ -5,7 +5,11 @@ metadata:
   name: miniweb
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: foxyoab/mini-web-app:~v0.4.0
+    argocd-image-updater.argoproj.io/image-list: app=foxyoab/mini-web-app
+    argocd-image-updater.argoproj.io/app.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/app.allow-tags: regexp:^0\.[0-9]+\.[0-9]+-uat\..*
+    argocd-image-updater.argoproj.io/app.helm.image-name: image.repository
+    argocd-image-updater.argoproj.io/app.helm.image-tag: image.tag
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -19,11 +23,17 @@ spec:
     helm:
       parameters:
         - name: "image.repository"
-          value: foxyoab/mini-web-app
+          value: "foxyoab/mini-web-app"
         - name: "image.tag"
-          value: v0.1.0
+          value: "uat"
   project: default
   syncPolicy:
     automated:
       prune: true
-      selfHeal: false
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
